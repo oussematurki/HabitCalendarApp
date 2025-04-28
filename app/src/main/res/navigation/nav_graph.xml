@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/todayFragment">
+
+    <fragment
+        android:id="@+id/todayFragment"
+        android:name="com.example.habitcalendar.ui.TodayFragment"
+        android:label="Today">
+        <action
+            android:id="@+id/action_todayFragment_to_addHabitFragment"
+            app:destination="@id/addHabitFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addHabitFragment"
+        android:name="com.example.habitcalendar.ui.AddHabitFragment"
+        android:label="Add Habit" />
+</navigation>
