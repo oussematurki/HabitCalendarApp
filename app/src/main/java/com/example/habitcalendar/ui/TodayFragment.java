@@ -18,10 +18,13 @@ import com.example.habitcalendar.data.HabitDatabase;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.navigation.fragment.NavHostFragment;
 
-
 import java.util.List;
 
 public class TodayFragment extends Fragment {
+
+    private HabitDao habitDao;
+    private HabitAdapter habitAdapter;
+    private RecyclerView recyclerView;
 
     @Nullable
     @Override
@@ -32,31 +35,19 @@ public class TodayFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_today, container, false);
 
-        // Find the RecyclerView from layout
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerViewHabits);
+        // Setup RecyclerView
+        recyclerView = view.findViewById(R.id.recyclerViewHabits);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-//        // ✅ Use your singleton HabitDatabase instance
-//        HabitDao habitDao = HabitDatabase.getInstance(requireContext()).habitDao();
-//
-//        // 🧪 Add temporary test habits
-//        if (habitDao.getAllHabits().isEmpty()) {
-//            habitDao.insert(new Habit("Read Quran", "Spiritual", Habit.HabitStatus.WAITING));
-//            habitDao.insert(new Habit("Workout", "Health", Habit.HabitStatus.WAITING));
-//            habitDao.insert(new Habit("Study", "Productivity", Habit.HabitStatus.WAITING));
-//
-//        }
+        // Initialize DAO
+        habitDao = HabitDatabase.getInstance(requireContext()).habitDao();
 
-
-//        // ⚠️ TEMP: Use allowMainThreadQueries() for testing; later switch to background thread
-//        List<Habit> habits = habitDao.getAllHabits();
-
-//        // ✅ Pass the DAO to the adapter so it can update Room when status changes
-//        HabitAdapter adapter = new HabitAdapter(habits, habitDao);
-//        recyclerView.setAdapter(adapter);
+        // Load habits from database
+        loadHabits();   
 
         return view;
     }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -68,4 +59,14 @@ public class TodayFragment extends Fragment {
         });
     }
 
+    private void loadHabits() {
+        new Thread(() -> {
+            List<Habit> habits = habitDao.getAllHabits();
+
+            requireActivity().runOnUiThread(() -> {
+                habitAdapter = new HabitAdapter(habits, habitDao);
+                recyclerView.setAdapter(habitAdapter);
+            });
+        }).start();
+    }
 }

@@ -22,7 +22,7 @@ public class HabitAdapter extends RecyclerView.Adapter<HabitAdapter.HabitViewHol
 
     public HabitAdapter(List<Habit> habitList, HabitDao habitDao) {
         this.habitList = habitList;
-        this.habitDao = this.habitDao;
+        this.habitDao = habitDao;
     }
 
     @NonNull
